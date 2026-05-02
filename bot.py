@@ -1,0 +1,41 @@
+bot
+import telebot
+import requests
+import random
+
+TOKEN = 8689284780:AAFRAIXwT1jvYR7TckhIGT5uPlQplZLB8i8
+bot = telebot.TeleBot(TOKEN)
+
+def get_gold():
+    try:
+        url = "https://api.gold-api.com/price/XAU"
+        r = requests.get(url)
+        data = r.json()
+        return data["price"]
+    except:
+        return 3350
+
+@bot.message_handler(commands=['start'])
+def start(msg):
+    bot.reply_to(msg,
+    "🔥 Feny Gold Bot PRO 🔥\n\n"
+    "/price = harga gold\n"
+    "/signal = sinyal gold")
+
+@bot.message_handler(commands=['price'])
+def price(msg):
+    harga = get_gold()
+    bot.reply_to(msg, f"💰 Harga Gold Sekarang: {harga}")
+
+@bot.message_handler(commands=['signal'])
+def signal(msg):
+    harga = get_gold()
+
+    if harga > 3350:
+        text = f"📈 BUY XAUUSD\nEntry: {harga}\nTP: {harga+10}\nSL: {harga-7}"
+    else:
+        text = f"📉 SELL XAUUSD\nEntry: {harga}\nTP: {harga-10}\nSL: {harga+7}"
+
+    bot.reply_to(msg, text)
+
+bot.infinity_polling()
